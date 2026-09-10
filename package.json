@@ -2,8 +2,8 @@
   "name": "doc-auto-fill-service",
   "version": "1.0.0",
   "description": "AI-powered voice and text quotation auto-fill web service",
-  "main": "server.js",
   "scripts": {
+    "build": "echo 'Static build ready'",
     "start": "node server.js"
   },
   "keywords": [
