@@ -1,0 +1,913 @@
+/* ==========================================================================
+   CSS Stylesheet for Quotation Auto-Fill Service
+   Vanilla CSS with Modern Aesthetics & Pixel-Perfect A4 Print System
+   ========================================================================== */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --accent: #f43f5e;
+  --bg-app: #0f172a;
+  --panel-bg: rgba(30, 41, 59, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --card-bg: #1e293b;
+  --input-bg: #0f172a;
+  --border-color: #334155;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  /* Paper specific styles (Print & View) */
+  --paper-bg: #ffffff;
+  --paper-text: #111827;
+  --paper-border: #222222;
+  --paper-th-bg: #f1f3f5;
+  --paper-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Background ambient glow */
+body::before {
+  content: '';
+  position: fixed;
+  top: -10vw;
+  left: -10vw;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.15), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -10vw;
+  right: -10vw;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.1), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--panel-border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-badge {
+  font-size: 0.72rem;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Main Container Layout */
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  height: calc(100vh - 63px);
+  position: relative;
+  z-index: 10;
+}
+
+/* Left Sidebar - AI & Controls */
+.sidebar-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Glass Card */
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.card-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title span.badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+/* Form Controls */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
+}
+
+.input-group label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.text-input, .select-input, .textarea-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.text-input:focus, .select-input:focus, .textarea-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+.select-input {
+  cursor: pointer;
+}
+
+.toggle-visibility-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+}
+
+.toggle-visibility-btn:hover {
+  color: var(--text-main);
+}
+
+/* STT & Prompt Input Area */
+.prompt-area-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.textarea-input {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+/* Voice Microphone Button */
+.mic-control-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.mic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mic-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
+.mic-btn.active {
+  background: #ef4444;
+  color: white;
+  border-color: #dc2626;
+  animation: pulse-mic 1.5s infinite;
+}
+
+@keyframes pulse-mic {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.mic-status {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mic-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.mic-status.listening .dot {
+  background: #ef4444;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+/* Sample Prompt Chips */
+.sample-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.sample-chip {
+  font-size: 0.72rem;
+  background: rgba(51, 65, 85, 0.7);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sample-chip:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* Main Action Buttons */
+.action-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  flex: 1;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(51, 65, 85, 0.6);
+  color: #cbd5e1;
+  border: 1px solid var(--panel-border);
+}
+
+.btn-secondary:hover {
+  background: rgba(71, 85, 105, 0.8);
+  color: white;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fee2e2;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #047857, #059669);
+  transform: translateY(-1px);
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Status logs */
+.status-log {
+  font-size: 0.76rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: none;
+}
+
+.status-log.visible {
+  display: block;
+}
+
+.status-log.info {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+.status-log.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.status-log.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+
+/* Supplier Modal / Drawer */
+.collapsible-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.collapsible-content {
+  display: none;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.collapsible-content.open {
+  display: block;
+}
+
+/* Right Viewport - A4 Preview Stage */
+.preview-stage {
+  background: #334155;
+  overflow-y: auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Floating Action Bar above Paper */
+.paper-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+
+.paper-action-bar .info-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   A4 SHEET SPECIFICATION (Strict Korean Standard Quotation Layout)
+   ========================================================================== */
+
+.a4-sheet {
+  background-color: var(--paper-bg);
+  color: var(--paper-text);
+  width: 210mm;
+  min-height: 297mm;
+  padding: 12mm 12mm;
+  margin: 0 auto;
+  box-shadow: var(--paper-shadow);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  font-family: 'Pretendard', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Outer Document Frame Border */
+.sheet-inner-frame {
+  border: 2px solid #222222;
+  padding: 22px 20px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+/* Document Title Bar */
+.sheet-header {
+  position: relative;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.doc-no-tag {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 0.5px;
+}
+
+.doc-no-tag .editable-text {
+  display: inline-block;
+  min-width: 50px;
+  padding: 0 4px;
+  text-align: left;
+}
+
+.doc-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 24px;
+  padding-left: 24px;
+  display: inline-block;
+  color: #111;
+  border-bottom: none;
+}
+
+/* Meta & Supplier Section */
+.meta-and-supplier-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 16px;
+  margin-bottom: 14px;
+  align-items: end;
+}
+
+/* Left: Date, Client & Declaration */
+.client-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.date-row-line {
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid #111;
+  padding-bottom: 6px;
+  display: flex;
+  align-items: center;
+  color: #111;
+}
+
+.date-part {
+  min-width: 20px;
+  text-align: center;
+}
+
+.recipient-row-line {
+  font-size: 15px;
+  font-weight: 700;
+  border-bottom: 1px solid #111;
+  padding-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: #111;
+}
+
+.recipient-name {
+  flex: 1;
+  min-width: 80px;
+  padding-right: 8px;
+}
+
+.recipient-suffix {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.declaration-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111;
+  letter-spacing: 0.5px;
+}
+
+/* Right: Supplier Table */
+.supplier-table-container {
+  position: relative;
+}
+
+.supplier-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  border: 1.5px solid #111;
+}
+
+.supplier-table th, .supplier-table td {
+  border: 1px solid #111;
+  padding: 3px 6px;
+  height: 22px;
+}
+
+.supplier-table .vert-header {
+  width: 22px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  background-color: #dbe5f1;
+  line-height: 1.4;
+  padding: 2px;
+}
+
+.supplier-table .th-label {
+  background-color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  width: 84px;
+}
+
+.supplier-table .ceo-cell {
+  position: relative;
+}
+
+.seal-stamp-img {
+  position: absolute;
+  right: 4px;
+  top: -10px;
+  width: 42px;
+  height: 42px;
+  pointer-events: none;
+  opacity: 0.88;
+  mix-blend-mode: multiply;
+  transform: rotate(-5deg);
+  transition: opacity 0.2s;
+}
+
+.seal-stamp-img.hidden {
+  opacity: 0;
+}
+
+/* Total Amount Display Bar (견적금액 피치색) */
+.grand-total-banner {
+  display: grid;
+  grid-template-columns: 20% 1fr 30%;
+  border: 1.5px solid #111;
+  background-color: #fde9d9;
+  height: 38px;
+  margin-bottom: 12px;
+  font-size: 13.5px;
+}
+
+.total-label-cell {
+  border-right: 1px solid #111;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
+}
+
+.total-korean-cell {
+  border-right: 1px solid #111;
+  font-weight: 600;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.total-number-cell {
+  font-weight: 700;
+  font-size: 15px;
+  font-family: 'Pretendard', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 16px;
+  letter-spacing: 0.5px;
+}
+
+/* Main Items Table */
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  border: 1.5px solid #111;
+  margin-bottom: 12px;
+}
+
+.items-table th, .items-table td {
+  border: 1px solid #111;
+  padding: 4px 6px;
+}
+
+.items-table thead th {
+  background-color: #dbe5f1;
+  font-weight: 700;
+  text-align: center;
+  height: 26px;
+  font-size: 12px;
+}
+
+.items-table tbody td {
+  height: 22px;
+  vertical-align: middle;
+}
+
+.items-table tfoot td {
+  background-color: #dbe5f1;
+  font-weight: 700;
+  height: 26px;
+}
+
+/* Item Columns Widths */
+.col-name { width: 25%; }
+.col-spec { width: 13%; }
+.col-qty { width: 7%; }
+.col-price { width: 14%; }
+.col-supply { width: 15%; }
+.col-vat { width: 13%; }
+.col-note { width: 13%; }
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.font-bold { font-weight: 700; }
+.text-muted-dash { color: #555; }
+
+/* Editable elements style in paper */
+[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  transition: background-color 0.15s;
+}
+
+[contenteditable="true"]:hover {
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+[contenteditable="true"]:focus {
+  background-color: rgba(37, 99, 235, 0.12);
+}
+
+/* Remarks & Notes Block (신규 단독 박스) */
+.bottom-notes-frame {
+  border: 1.5px solid #111;
+  padding: 10px 14px;
+  min-height: 52px;
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: auto;
+  color: #111;
+}
+
+.notes-content {
+  outline: none;
+  white-space: pre-wrap;
+}
+
+/* ==========================================================================
+   PRINT STYLESHEET (@media print)
+   Strictly print ONLY the A4 Quotation without any app chrome
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm 8mm 8mm 8mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body::before, body::after,
+  .app-header,
+  .sidebar-panel,
+  .paper-action-bar {
+    display: none !important;
+  }
+
+  .app-main {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .preview-stage {
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .a4-sheet {
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+  }
+
+  .sheet-inner-frame {
+    border: 2px solid #111 !important;
+  }
+
+  .seal-stamp-img {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .grand-total-banner {
+    background-color: #fde9d9 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .items-table thead th, 
+  .items-table tfoot td,
+  .supplier-table .vert-header {
+    background-color: #dbe5f1 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+  .app-main {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .sidebar-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--panel-border);
+    height: auto;
+  }
+
+  .a4-sheet {
+    transform: scale(0.9);
+    transform-origin: top center;
+    margin-bottom: -60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .a4-sheet {
+    transform: scale(0.75);
+    margin-bottom: -150px;
+  }
+}

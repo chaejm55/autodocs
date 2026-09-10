@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Outer circle with authentic carved stamp look -->
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#d32f2f" stroke-width="4.5" stroke-dasharray="0.5 0.5"/>
+  <circle cx="50" cy="50" r="41" fill="none" stroke="#d32f2f" stroke-width="1.5"/>
+  
+  <!-- Stamp Text: 신청미인 (申請美印 or 한글 신청미인) in traditional seal style -->
+  <g fill="#d32f2f" font-family="'Batang', 'Gungsuh', 'Noto Serif KR', serif" font-weight="900" text-anchor="middle" dominant-baseline="central">
+    <!-- 2x2 seal layout: Top-Right(신), Bottom-Right(청), Top-Left(미), Bottom-Left(인) traditional Korean seal order -->
+    <text x="68" y="32" font-size="24" transform="scale(1, 1.15) translate(0, -4)">신</text>
+    <text x="68" y="70" font-size="24" transform="scale(1, 1.15) translate(0, -9)">청</text>
+    <text x="32" y="32" font-size="24" transform="scale(1, 1.15) translate(0, -4)">미</text>
+    <text x="32" y="70" font-size="24" transform="scale(1, 1.15) translate(0, -9)">인</text>
+  </g>
+</svg>

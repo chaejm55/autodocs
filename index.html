@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스마트 견적서 자동 생성기 | AI 음성 및 텍스트 자동 기입</title>
+  <meta name="description" content="아무말이나 메모, 메일 텍스트를 입력하거나 음성으로 말하면 AI가 표준 견적서 양식에 맞춰 자동으로 깔끔하게 기입해 줍니다.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">📑</div>
+      <div>
+        <span class="brand-title">스마트 견적서 자동 생성기</span>
+        <span class="brand-badge">OpenRouter AI</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-header-print" class="btn btn-success" title="A4 규격으로 인쇄 또는 PDF로 저장">
+        <span>🖨️</span> 인쇄 / PDF 저장
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workstation Layout -->
+  <main class="app-main">
+
+    <!-- Left: AI Input & Control Sidebar -->
+    <aside class="sidebar-panel">
+      <div class="sidebar-content">
+
+        <!-- Card 1: OpenRouter AI 설정 -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>⚡ OpenRouter AI 설정</span>
+            <span class="badge">초저비용 가성비 모델</span>
+          </div>
+
+          <div class="input-group">
+            <label for="api-key-input">OpenRouter API Key</label>
+            <div class="input-wrapper">
+              <input type="password" id="api-key-input" class="text-input" placeholder="sk-or-v1-..." autocomplete="off">
+              <button type="button" id="btn-toggle-key" class="toggle-visibility-btn" title="키 표시/숨김">👁️</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="model-select">사용할 AI 모델</label>
+            <select id="model-select" class="select-input">
+              <!-- Dynamically populated via JS -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Card 2: 자연어 및 음성(STT) 입력 창 -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>🎙️ 자연어 / 음성 입력</span>
+            <span class="badge">아무말 대잔치 · 메모 · 메일</span>
+          </div>
+
+          <!-- 음성 인식 컨트롤 바 -->
+          <div class="mic-control-bar">
+            <button type="button" id="btn-mic-toggle" class="mic-btn">
+              <span class="mic-icon">🎙️</span>
+              <span id="mic-btn-label">음성으로 말하기</span>
+            </button>
+            <div id="mic-status-box" class="mic-status">
+              <span class="dot"></span>
+              <span id="mic-status-text">마이크 대기 중</span>
+            </div>
+          </div>
+
+          <!-- 텍스트 입력창 -->
+          <div class="prompt-area-container">
+            <textarea id="prompt-input" class="textarea-input" rows="5" placeholder="예: '서초구청에 납품할 사무실 컴퓨터 본체 3대 대당 85만원, 27인치 모니터 3대 대당 22만원, 키보드 마우스 세트 3개 각 3만원으로 견적서 작성해줘. 납품기한은 다음 주 금요일까지로 표기해줘.'"></textarea>
+
+            <!-- 빠른 예시 버튼들 -->
+            <div class="sample-chips">
+              <span class="sample-chip" data-sample="sample_img">📄 첨부 양식 예시 (제품1, 제품2)</span>
+              <span class="sample-chip" data-sample="office">💼 사무실 PC 구매</span>
+              <span class="sample-chip" data-sample="cafe">☕ 카페 원두 정기공급</span>
+              <span class="sample-chip" data-sample="interior">🛠️ 회의실 영상 시공</span>
+            </div>
+          </div>
+
+          <!-- 액션 버튼 -->
+          <div class="action-btn-group" style="margin-top: 14px;">
+            <button id="btn-process-ai" class="btn btn-primary">
+              <span id="btn-process-spinner" class="spinner" style="display: none;"></span>
+              <span id="btn-process-text">✨ 견적서 자동 채우기</span>
+            </button>
+            <button id="btn-clear-prompt" class="btn btn-secondary" title="입력 내용 지우기">지우기</button>
+          </div>
+
+          <!-- 상태 알림 로그 -->
+          <div id="status-log-box" class="status-log" style="margin-top: 12px;"></div>
+        </div>
+
+        <!-- Card 3: 공급자 정보 설정 (접이식) -->
+        <div class="glass-card">
+          <div class="card-title collapsible-header" id="supplier-collapsible-trigger">
+            <span>🏢 공급자 정보 관리</span>
+            <span style="font-size: 0.8rem; color: #94a3b8;">펼치기/접기 ▼</span>
+          </div>
+          <div class="collapsible-content" id="supplier-collapsible-content">
+            <div class="input-group">
+              <label>사업자 등록번호</label>
+              <input type="text" id="sup-reg-no" class="text-input" value="568-19-00059">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div class="input-group">
+                <label>상호 (법인명)</label>
+                <input type="text" id="sup-company" class="text-input" value="안물마켓">
+              </div>
+              <div class="input-group">
+                <label>대표자 성명</label>
+                <input type="text" id="sup-ceo" class="text-input" value="신청미">
+              </div>
+            </div>
+            <div class="input-group">
+              <label>사업장 주소</label>
+              <input type="text" id="sup-address" class="text-input" value="경기도 용인시 처인구 중부대로 519번길 13">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div class="input-group">
+                <label>업태</label>
+                <input type="text" id="sup-biz-type" class="text-input" value="도·소매">
+              </div>
+              <div class="input-group">
+                <label>업종</label>
+                <input type="text" id="sup-biz-item" class="text-input" value="생활용품">
+              </div>
+            </div>
+            <div class="input-group">
+              <label>연락처</label>
+              <input type="text" id="sup-contact" class="text-input" value="010-2241-1337">
+            </div>
+            <button id="btn-save-supplier" class="btn btn-secondary" style="width: 100%; margin-top: 6px;">공급자 정보 저장</button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Right: A4 Document Preview Stage -->
+    <section class="preview-stage">
+
+      <!-- Paper Action Bar (Top of Paper) -->
+      <div class="paper-action-bar">
+        <span class="info-text">💡 문서의 모든 텍스트 및 숫자는 직접 클릭하여 수정할 수 있습니다.</span>
+        <button id="btn-toggle-seal" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.78rem;">
+          🔴 직인(도장) 토글
+        </button>
+        <button id="btn-reset-invoice" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.78rem;">
+          🔄 견적서 초기화
+        </button>
+      </div>
+
+      <!-- A4 Sheet Container -->
+      <article class="a4-sheet" id="invoice-sheet">
+        <div class="sheet-inner-frame">
+
+          <!-- Sheet Header (NO & Title) -->
+          <div class="sheet-header">
+            <div class="doc-no-tag">
+              NO <span id="doc-no" class="editable-text" contenteditable="true"></span>
+            </div>
+            <h1 class="doc-title">견 적 서</h1>
+          </div>
+
+          <!-- Meta info (Date/Recipient) + Supplier Box Grid -->
+          <div class="meta-and-supplier-grid">
+            
+            <!-- Left: Date & Recipient -->
+            <div class="client-info-block">
+              <div class="date-row-line">
+                <span id="doc-date-year" class="date-part" contenteditable="true">2026</span>년&nbsp;&nbsp;
+                <span id="doc-date-month" class="date-part" contenteditable="true">09</span>월&nbsp;&nbsp;
+                <span id="doc-date-day" class="date-part" contenteditable="true">10</span>일
+              </div>
+
+              <div class="recipient-row-line">
+                <span id="recipient-name" class="recipient-name" contenteditable="true" placeholder="고객명 또는 상호"></span>
+                <span class="recipient-suffix">귀하</span>
+              </div>
+
+              <div class="declaration-text">
+                아래와 같이 견적합니다.
+              </div>
+            </div>
+
+            <!-- Right: Supplier Box -->
+            <div class="supplier-table-container">
+              <table class="supplier-table">
+                <tbody>
+                  <tr>
+                    <td rowspan="5" class="vert-header">공<br>급<br>자</td>
+                    <td class="th-label">사업자등록번호</td>
+                    <td colspan="3" id="cell-sup-regno">568-19-00059</td>
+                  </tr>
+                  <tr>
+                    <td class="th-label">상호</td>
+                    <td id="cell-sup-company">안물마켓</td>
+                    <td class="th-label" style="width: 44px;">성명</td>
+                    <td class="ceo-cell">
+                      <span id="cell-sup-ceo">신청미</span>
+                      <!-- Authentic Seal SVG stamp overlay -->
+                      <img id="seal-stamp" class="seal-stamp-img" src="assets/seal.svg" alt="직인">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="th-label">사업장주소</td>
+                    <td colspan="3" id="cell-sup-address">경기도 용인시 처인구 중부대로 519번길 13</td>
+                  </tr>
+                  <tr>
+                    <td class="th-label">업태</td>
+                    <td id="cell-sup-biztype">도·소매</td>
+                    <td class="th-label" style="width: 44px;">업종</td>
+                    <td id="cell-sup-bizitem">생활용품</td>
+                  </tr>
+                  <tr>
+                    <td class="th-label">연락처</td>
+                    <td colspan="3" id="cell-sup-contact">010-2241-1337</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+
+          <!-- Grand Total Bar (견적금액 피치색 배너) -->
+          <div class="grand-total-banner">
+            <div class="total-label-cell">견적금액</div>
+            <div class="total-korean-cell">
+              <span id="total-korean">일금 영 원정 (부가세포함)</span>
+            </div>
+            <div class="total-number-cell">
+              ₩<span id="total-number">0</span>
+            </div>
+          </div>
+
+          <!-- Main Items Table -->
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th class="col-name">품명</th>
+                <th class="col-spec">규격</th>
+                <th class="col-qty">수량</th>
+                <th class="col-price">단가</th>
+                <th class="col-supply">공급가액</th>
+                <th class="col-vat">세액</th>
+                <th class="col-note">비고</th>
+              </tr>
+            </thead>
+            <tbody id="invoice-items-body">
+              <!-- Dynamic editable rows rendered via JS -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="text-center font-bold">합계</td>
+                <td id="summary-supply" class="text-right font-bold">0</td>
+                <td id="summary-vat" class="text-right font-bold">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Remarks Box (단독 하단 테두리 박스) -->
+          <div class="bottom-notes-frame">
+            <div id="doc-notes" class="notes-content" contenteditable="true">견적유효기간 30일 이내&#10;결제방식 : 현금결제</div>
+          </div>
+
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
