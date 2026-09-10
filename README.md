@@ -64,13 +64,25 @@ node server.js
 
 ---
 
-## 🌐 배포 가이드 (Vercel 등 서버리스 배포)
+## 🌐 배포 가이드
 
-1. GitHub 저장소(`https://github.com/chaejm55/autodocs`)를 Vercel / Netlify / Render 등에 연동합니다.
-2. 배포 대시보드의 **Environment Variables (환경변수)** 설정에서 아래 값을 등록합니다:
-   - Key: `OPENROUTER_API_KEY`
-   - Value: `[귀하의 OpenRouter API Key]`
-3. 본 프로젝트에 포함된 `api/extract.js`가 자동으로 서버리스 함수로 작동하여 키 노출 없이 안전하게 서비스됩니다.
+### A. Vercel 배포
+1. GitHub 저장소(`https://github.com/chaejm55/autodocs`)를 Vercel에 연동합니다.
+2. **Framework Preset**: `Other` (기본값)
+3. **Environment Variables**:
+   - `OPENROUTER_API_KEY`: `[귀하의 OpenRouter API Key]`
+4. `api/extract.js`가 자동으로 Vercel Serverless Function으로 작동합니다.
+
+### B. Cloudflare Pages 배포
+1. [Cloudflare 대시보드](https://dash.cloudflare.com) > **Workers & Pages** > **Create application** > **Pages** > **Connect to Git** 클릭.
+2. GitHub의 `chaejm55/autodocs` 저장소 선택.
+3. 빌드 설정:
+   - **Framework preset**: `None`
+   - **Build command**: `npm run build`
+   - **Build output directory**: `.` (루트)
+4. **Environment variables**:
+   - `OPENROUTER_API_KEY`: `[귀하의 OpenRouter API Key]`
+5. `functions/api/extract.js`가 자동으로 Cloudflare Pages Functions (Edge Worker)로 작동합니다.
 
 ---
 
@@ -79,7 +91,10 @@ node server.js
 ```
 doc_auto_fill_service/
 ├── api/
-│   └── extract.js     # Vercel 등 서버리스 배포용 프록시 API 엔드포인트
+│   └── extract.js     # Vercel 서버리스 배포용 API 엔드포인트
+├── functions/
+│   └── api/
+│       └── extract.js # Cloudflare Pages Functions 배포용 API 엔드포인트
 ├── index.html         # 메인 웹 페이지 (컨트롤 사이드바 & A4 견적서 시트)
 ├── css/
 │   └── style.css      # 모던 UI 스타일링 및 A4 인쇄 전용 CSS
@@ -92,6 +107,8 @@ doc_auto_fill_service/
 │   └── seal.svg       # 대표자 직인 도장 벡터 리소스
 ├── server.js          # 순수 Node.js 로컬 정적 서버 및 프록시 API
 ├── package.json       # 프로젝트 설정 및 실행 스크립트
+├── vercel.json        # Vercel 라우팅 설정
+├── wrangler.toml      # Cloudflare Pages 설정
 ├── .env.example       # 환경변수 예시 파일
 └── README.md          # 프로젝트 안내 문서
 ```
