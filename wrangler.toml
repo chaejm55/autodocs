@@ -1,0 +1,6 @@
+name = "autodocs"
+compatibility_date = "2026-09-01"
+pages_build_output_dir = "."
+
+[vars]
+# OPENROUTER_API_KEY는 Cloudflare 대시보드의 Settings > Environment Variables에 등록하세요.
