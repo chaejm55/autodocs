@@ -32,23 +32,15 @@
     <aside class="sidebar-panel">
       <div class="sidebar-content">
 
-        <!-- Card 1: OpenRouter AI 설정 -->
+        <!-- Card 1: AI 모델 설정 (API 키는 서버 환경변수로 보호됨) -->
         <div class="glass-card">
           <div class="card-title">
-            <span>⚡ OpenRouter AI 설정</span>
-            <span class="badge">초저비용 가성비 모델</span>
+            <span>⚡ AI 모델 설정</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 6px; border-radius: 4px;">🔒 보안 서버 연동</span>
           </div>
 
           <div class="input-group">
-            <label for="api-key-input">OpenRouter API Key</label>
-            <div class="input-wrapper">
-              <input type="password" id="api-key-input" class="text-input" placeholder="sk-or-v1-..." autocomplete="off">
-              <button type="button" id="btn-toggle-key" class="toggle-visibility-btn" title="키 표시/숨김">👁️</button>
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label for="model-select">사용할 AI 모델</label>
+            <label for="model-select">사용할 AI 모델 (초저비용 가성비)</label>
             <select id="model-select" class="select-input">
               <!-- Dynamically populated via JS -->
             </select>

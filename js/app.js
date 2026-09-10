@@ -16,8 +16,6 @@ const SAMPLE_PROMPTS = {
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. DOM 요소 취득
-  const apiKeyInput = document.getElementById('api-key-input');
-  const btnToggleKey = document.getElementById('btn-toggle-key');
   const modelSelect = document.getElementById('model-select');
   const promptInput = document.getElementById('prompt-input');
   const btnMicToggle = document.getElementById('btn-mic-toggle');
@@ -105,29 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
     modelSelect.appendChild(opt);
   });
 
-  const savedKey = localStorage.getItem('openrouter_api_key');
-  if (savedKey) apiKeyInput.value = savedKey;
-
   const savedModel = localStorage.getItem('openrouter_selected_model');
   if (savedModel) modelSelect.value = savedModel;
 
-  apiKeyInput.addEventListener('input', () => {
-    localStorage.setItem('openrouter_api_key', apiKeyInput.value.trim());
-  });
-
   modelSelect.addEventListener('change', () => {
     localStorage.setItem('openrouter_selected_model', modelSelect.value);
-  });
-
-  // API 키 보이기/숨기기 토글
-  btnToggleKey.addEventListener('click', () => {
-    if (apiKeyInput.type === 'password') {
-      apiKeyInput.type = 'text';
-      btnToggleKey.textContent = '🔒';
-    } else {
-      apiKeyInput.type = 'password';
-      btnToggleKey.textContent = '👁️';
-    }
   });
 
   // 5. 음성 인식 (STT) 모듈 연동
@@ -179,15 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 7. AI 자동 변환 실행
   btnProcessAi.addEventListener('click', async () => {
-    const apiKey = apiKeyInput.value.trim();
     const model = modelSelect.value;
     const text = promptInput.value.trim();
-
-    if (!apiKey) {
-      showStatus('⚠️ OpenRouter API 키를 먼저 입력해 주세요. (openrouter.ai 에서 무료/유료 발급 가능)', 'error');
-      apiKeyInput.focus();
-      return;
-    }
 
     if (!text) {
       showStatus('⚠️ 견적서로 변환할 내용(음성 또는 텍스트)을 입력해 주세요.', 'error');
@@ -205,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startTime = performance.now();
 
     try {
-      const result = await extractQuotationData(apiKey, model, text);
+      const result = await extractQuotationData(model, text);
       const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
 
       // 견적서 데이터 채우기
